@@ -20,6 +20,7 @@ import com.tryden.spotifyclone.exoplayer.callbacks.MusicPlaybackPreparer
 import com.tryden.spotifyclone.exoplayer.callbacks.MusicPlayerEventListener
 import com.tryden.spotifyclone.exoplayer.callbacks.MusicPlayerNotificationListener
 import com.tryden.spotifyclone.other.Constants.MEDIA_ROOT_ID
+import com.tryden.spotifyclone.other.Constants.NETWORK_ERROR
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -153,6 +154,7 @@ class MusicService : MediaBrowserServiceCompat() {
                             isPlayerInitialized = true
                         }
                     } else {
+                        mediaSession.sendSessionEvent(NETWORK_ERROR, null)
                         result.sendResult(null)
                     }
                 }
