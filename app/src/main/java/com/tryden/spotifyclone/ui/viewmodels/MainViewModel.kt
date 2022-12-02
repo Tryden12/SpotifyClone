@@ -13,9 +13,11 @@ import com.tryden.spotifyclone.exoplayer.isPlaying
 import com.tryden.spotifyclone.exoplayer.isPrepared
 import com.tryden.spotifyclone.other.Constants.MEDIA_ROOT_ID
 import com.tryden.spotifyclone.other.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-@Suppress("DEPRECATION")
-class MainViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection
 ) : ViewModel() {
 
@@ -62,7 +64,7 @@ class MainViewModel @ViewModelInject constructor(
         musicServiceConnection.transportControls.seekTo(pos)
     }
 
-    fun playOrToggle(mediaItem: Song, toggle: Boolean = false) {
+    fun playOrToggleSong(mediaItem: Song, toggle: Boolean = false) {
         val isPrepared = playbackState.value?.isPrepared ?: false
         if (isPrepared && mediaItem.mediaId ==
             curPlayingSong?.value?.getString(METADATA_KEY_MEDIA_ID)) {
@@ -83,3 +85,4 @@ class MainViewModel @ViewModelInject constructor(
         musicServiceConnection.unSubscribe(MEDIA_ROOT_ID, object: MediaBrowserCompat.SubscriptionCallback() {})
     }
 }
+
