@@ -2,12 +2,16 @@ package com.tryden.spotifyclone.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.activity.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
+import com.google.android.material.snackbar.Snackbar
 import com.tryden.spotifyclone.R
 import com.tryden.spotifyclone.adapters.SwipeSongAdapter
 import com.tryden.spotifyclone.data.entities.Song
 import com.tryden.spotifyclone.databinding.ActivityMainBinding
+import com.tryden.spotifyclone.exoplayer.isPlaying
 import com.tryden.spotifyclone.exoplayer.toSong
 import com.tryden.spotifyclone.other.Status
 import com.tryden.spotifyclone.other.Status.*
@@ -30,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     private var curPlayingSong: Song? = null
 
+    private var playbackState: PlaybackStateCompat? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -39,7 +45,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.vpSong.adapter = swipeSongAdapter
 
+        registerCallback()
 
+        binding.ivPlayPause.setOnClickListener {
+            curPlayingSong?.let {
+                mainViewModel.playOrToggleSong(it, true) // true here because we togglin'
+            }
+        }
     }
 
     // Swipes view pager to current song
@@ -78,6 +90,54 @@ class MainActivity : AppCompatActivity() {
             glide.load(curPlayingSong?.imageUrl).into(binding.ivCurSongImage)
             switchViewPagerToCurrentSong(curPlayingSong ?: return@observe)
         }
+
+        // Anytime the playback state changes:
+        // song is paused, played, next/previous, etc.
+        mainViewModel.playbackState.observe(this) {
+            playbackState = it
+            binding.ivPlayPause.setImageResource(
+                if (playbackState?.isPlaying == true) R.drawable.ic_pause else R.drawable.ic_play
+            )
+        }
+
+        mainViewModel.isConnected.observe(this) {
+            it?.getContentIfNotHandled()?.let { result ->
+                when (result.status) {
+                    ERROR -> Snackbar.make(
+                            binding.rootLayout,
+                        result.message ?: "An unknown error occurred.",
+                            Snackbar.LENGTH_LONG
+                    ).show()
+                    else -> Unit // do nothing, return Unit
+                }
+            }
+        }
+
+        mainViewModel.networkError.observe(this) {
+            it?.getContentIfNotHandled()?.let { result ->
+                when (result.status) {
+                    ERROR -> Snackbar.make(
+                        binding.rootLayout,
+                        result.message ?: "An unknown network error occurred.",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    else -> Unit // do nothing, return Unit
+                }
+            }
+        }
+    }
+
+    private fun registerCallback() {
+        binding.vpSong.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (playbackState?.isPlaying == true) {
+                    mainViewModel.playOrToggleSong(swipeSongAdapter.songs[position])
+                } else {
+                    curPlayingSong = swipeSongAdapter.songs[position]
+                }
+            }
+        })
     }
 
 
