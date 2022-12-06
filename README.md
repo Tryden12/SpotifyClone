@@ -1,7 +1,8 @@
 # SpotifyClone
 This is a simple music player app.
 
-Here is what is used:
+
+# Here is what is used:
   - MVVM
   - ExoPlayer
   - FireBase
