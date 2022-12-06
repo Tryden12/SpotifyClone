@@ -1,9 +1,11 @@
 package com.tryden.spotifyclone.ui.fragments
 
 import android.os.Bundle
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -11,12 +13,15 @@ import com.bumptech.glide.RequestManager
 import com.tryden.spotifyclone.R
 import com.tryden.spotifyclone.data.entities.Song
 import com.tryden.spotifyclone.databinding.FragmentSongBinding
+import com.tryden.spotifyclone.exoplayer.isPlaying
 import com.tryden.spotifyclone.exoplayer.toSong
 import com.tryden.spotifyclone.other.Status
 import com.tryden.spotifyclone.other.Status.SUCCESS
 import com.tryden.spotifyclone.ui.viewmodels.MainViewModel
 import com.tryden.spotifyclone.ui.viewmodels.SongViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,6 +37,10 @@ class SongFragment : Fragment(R.layout.fragment_song) {
 
     private var curPlayingSong: Song? = null
 
+    private var playbackState: PlaybackStateCompat? = null
+
+    private var shouldUpdateSeekbar = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +54,39 @@ class SongFragment : Fragment(R.layout.fragment_song) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         subscribeToObservers()
+
+        binding.ivPlayPauseDetail.setOnClickListener {
+            curPlayingSong?.let {
+                mainViewModel.playOrToggleSong(it, true)
+            }
+        }
+
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    setCurPlayerTimeToTextView(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                shouldUpdateSeekbar = false
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    mainViewModel.seekTo(it.progress.toLong())
+                    shouldUpdateSeekbar = true
+                }
+            }
+        })
+
+        binding.ivSkipPrevious.setOnClickListener {
+            mainViewModel.skipToPreviousSong()
+        }
+
+        binding.ivSkip.setOnClickListener {
+            mainViewModel.skipToNextSong()
+        }
     }
 
     private fun updateTitleAndSongImage(song: Song) {
@@ -75,5 +117,31 @@ class SongFragment : Fragment(R.layout.fragment_song) {
             curPlayingSong = it.toSong()
             updateTitleAndSongImage(curPlayingSong!!)
         }
+
+        mainViewModel.playbackState.observe(viewLifecycleOwner) {
+            playbackState = it
+            binding.ivPlayPauseDetail.setImageResource(
+                if (playbackState?.isPlaying == true) R.drawable.ic_pause else R.drawable.ic_play
+            )
+            binding.seekBar.progress = it?.position?.toInt() ?: 0
+        }
+
+        songViewModel.curPlayerPosition.observe(viewLifecycleOwner) {
+            if (shouldUpdateSeekbar) {
+                binding.seekBar.progress = it.toInt()
+                setCurPlayerTimeToTextView(it)
+            }
+        }
+
+        songViewModel.curSongDuration.observe(viewLifecycleOwner) {
+            binding.seekBar.max = it.toInt()
+            val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+            binding.tvSongDuration.text = dateFormat.format(it)
+        }
+    }
+
+    private fun setCurPlayerTimeToTextView(millis: Long) {
+        val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+        binding.tvCurTime.text = dateFormat.format(millis)
     }
 }
