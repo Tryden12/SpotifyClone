@@ -60,8 +60,8 @@ class SwipeSongAdapter : RecyclerView.Adapter<SwipeSongAdapter.SongViewHolder>()
     inner class SongViewHolder (
         private val itemBinding: SwipeItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(song: Song) {
-            val text = "${song.title} - ${song.subtitle}"
-            itemBinding.tvPrimary.text = text
+            itemBinding.tvPrimary.text = song.title
+            itemBinding.tvSecondary.text = song.subtitle
         }
     }
 

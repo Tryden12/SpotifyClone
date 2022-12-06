@@ -7,8 +7,14 @@
 
     <ImageView
         android:id="@+id/ivItemImage"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -16,23 +22,24 @@
         android:id="@+id/tvPrimary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="14dp"
         android:gravity="center|left"
         android:text="Playlist Title"
-        android:layout_marginTop="8dp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivItemImage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvSecondary"
+        style="@style/SecondaryText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="100 Songs"
-        android:textSize="14sp"
-        android:layout_marginLeft="16dp"
+        android:textSize="12sp"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivItemImage"

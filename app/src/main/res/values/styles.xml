@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -8,6 +8,8 @@
         <item name="android:textViewStyle">@style/PoppinsTextStyle</item>
         <item name="materialButtonStyle">@style/ButtonStyle</item>
         <item name="textInputStyle">@style/EditTextStyle</item>
+        <item name="android:statusBarColor">@color/darkBackground</item>
+
     </style>
 
     <style name="EditTextStyle" parent="Widget.Design.TextInputLayout">
@@ -30,5 +32,22 @@
     <style name="PoppinsTextStyle" parent="android:Widget.TextView">
         <item name="fontFamily">@font/poppins_regular</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="SecondaryText" parent="android:Widget.TextView">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+
+    <style name="roundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">5dp</item>
+    </style>
+
+    <style name="darkBackground" parent="">
+        <item name="android:background">@color/darkBackground</item>
+    </style>
+    <style name="whiteBackground" parent="">
+        <item name="android:background">@android:color/white</item>
     </style>
 </resources>
