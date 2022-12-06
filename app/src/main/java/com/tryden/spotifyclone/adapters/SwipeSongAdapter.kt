@@ -45,6 +45,11 @@ class SwipeSongAdapter : RecyclerView.Adapter<SwipeSongAdapter.SongViewHolder>()
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = songs[position]
         holder.bind(song)
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.let { click ->
+                click(song)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -56,13 +61,7 @@ class SwipeSongAdapter : RecyclerView.Adapter<SwipeSongAdapter.SongViewHolder>()
         private val itemBinding: SwipeItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(song: Song) {
             val text = "${song.title} - ${song.subtitle}"
-            itemBinding.tvPrimary.text = song.title
-
-            setOnItemClickListener {
-                onItemClickListener?.let { click ->
-                    click(song)
-                }
-            }
+            itemBinding.tvPrimary.text = text
         }
     }
 

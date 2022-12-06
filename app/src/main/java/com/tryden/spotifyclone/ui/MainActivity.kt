@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
     private var playbackState: PlaybackStateCompat? = null
 
+    lateinit var navHostFragment: NavHostFragment
+    lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -50,6 +57,46 @@ class MainActivity : AppCompatActivity() {
         binding.ivPlayPause.setOnClickListener {
             curPlayingSong?.let {
                 mainViewModel.playOrToggleSong(it, true) // true here because we togglin'
+            }
+        }
+
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        navController = navHostFragment.navController
+
+        navHostDestinations()
+    }
+
+    private fun hideBottomBar() {
+        binding.ivCurSongImage.isVisible = false
+        binding.vpSong.isVisible = false
+        binding.ivPlayPause.isVisible = false
+    }
+
+    private fun showBottomBar() {
+        binding.ivCurSongImage.isVisible = true
+        binding.vpSong.isVisible = true
+        binding.ivPlayPause.isVisible = true
+    }
+
+    private fun navHostDestinations() {
+        binding.ivCurSongImage.setOnClickListener {
+            navController.navigate(
+                R.id.globalActionToSongFragment
+            )
+        }
+
+        swipeSongAdapter.setOnItemClickListener {
+            navController.navigate(
+                R.id.globalActionToSongFragment
+            )
+        }
+
+
+        navController.addOnDestinationChangedListener{ _, destination, _ ->
+            when (destination.id) {
+                R.id.songFragment -> hideBottomBar()
+                R.id.homeFragment -> showBottomBar()
+                else -> showBottomBar()
             }
         }
     }
