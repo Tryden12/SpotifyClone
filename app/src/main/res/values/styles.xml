@@ -50,4 +50,8 @@
     <style name="whiteBackground" parent="">
         <item name="android:background">@android:color/white</item>
     </style>
+
+    <style name="boldText" parent="">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
