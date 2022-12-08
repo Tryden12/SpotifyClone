@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
@@ -8,8 +8,11 @@
         <item name="android:textViewStyle">@style/PoppinsTextStyle</item>
         <item name="materialButtonStyle">@style/ButtonStyle</item>
         <item name="textInputStyle">@style/EditTextStyle</item>
-        <item name="android:statusBarColor">@color/darkBackground</item>
+    </style>
 
+    <style name="splashScreenTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_image</item>
+        <item name="android:statusBarColor">@color/darkBackground</item>
     </style>
 
     <style name="EditTextStyle" parent="Widget.Design.TextInputLayout">
